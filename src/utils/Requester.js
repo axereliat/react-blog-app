@@ -55,3 +55,12 @@ export const addComment = (id, content) => {
         }
     });
 }
+
+export const deleteComment = (postId, commentId) => {
+    return axios.post(baseUrl + '/posts/' + postId + '/comments/' + commentId + '/delete', {},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}

@@ -1,14 +1,17 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {addComment, getPost} from "../utils/Requester.js";
+import {addComment, deleteComment, getPost} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import toastr from "toastr";
+import ConfirmationModal from "./ConfirmationModal.jsx";
 
 export default () => {
     let {id} = useParams();
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState('');
+    const [open, setOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
 
     useEffect(() => {
         getPost(id)
@@ -29,7 +32,6 @@ export default () => {
 
         addComment(id, comment)
             .then(res => {
-                console.log(res.data);
                 toastr.success('Your comment was successfully added');
                 setComment('');
 
@@ -40,8 +42,22 @@ export default () => {
             .catch(console.log);
     }
 
+    const handleDeleteComment = e => {
+        e.preventDefault();
+
+        deleteComment(id, selectedId)
+            .then(() => {
+                toastr.success('Your comment was successfully deleted');
+                setComments(comments.filter(c => c.id !== selectedId));
+                setOpen(false);
+            })
+            .catch(console.log);
+    }
+
     return (
         <div>
+            <ConfirmationModal open={open} setOpen={setOpen}
+            item="comment" handleYes={handleDeleteComment}/>
             <div className="border-b border-gray-200 pb-5" key={post.id}>
                 <div className="flex justify-between items-center">
                     <div>
@@ -71,14 +87,14 @@ export default () => {
                                         value={comment}
                                         onChange={e => setComment(e.target.value)}
                                         id="comment"
+                                        required={true}
                                         name="comment"
                                         placeholder="your comment..."
                                         rows={3}
                                         className="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
-                                        defaultValue={''}
                                     />
                     </div>
-                    <div>
+                    <div className="mt-4">
                         <button
                             type="submit"
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -90,8 +106,8 @@ export default () => {
             </form>
             <ul role="list" className="divide-y divide-gray-200">
                 {comments.map(c => (
-                    <li key={c.id} className="flex py-4">
-                        <div className="ml-3 flex justify-between items-center space-x-10">
+                    <li key={c.id} className="py-4">
+                        <div className="ml-3 flex justify-between items-center">
                             <div>
                                 <p className="text-sm text-gray-500">{c.createdBy.name}</p>
                                 <p className="text-sm font-medium text-gray-900">{c.content}</p>
@@ -99,7 +115,13 @@ export default () => {
                             </div>
                             <div>
                                 <button
-                                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Delete
+                                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                    onClick={() => {
+                                        setSelectedId(c.id);
+                                        setOpen(true);
+                                    }}
+                                >
+                                    Delete
                                 </button>
                             </div>
                         </div>
