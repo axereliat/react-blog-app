@@ -47,6 +47,15 @@ export const getPost = id => {
     });
 }
 
+export const getComments = (id, page) => {
+    return axios.get(baseUrl + '/posts/' + id + '/comments?page=' + page,{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
 export const addComment = (id, content) => {
     return axios.post(baseUrl + '/posts/' + id + '/comments',{content}, {
         headers: {

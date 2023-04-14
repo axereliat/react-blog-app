@@ -1,6 +1,6 @@
 import {Link, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {addComment, deleteComment, getPost} from "../utils/Requester.js";
+import {addComment, deleteComment, getComments, getPost} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import toastr from "toastr";
 import ConfirmationModal from "./ConfirmationModal.jsx";
@@ -13,13 +13,19 @@ export default () => {
     const [comment, setComment] = useState('');
     const [open, setOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
+    const [page, setPage] = useState(0);
 
     useEffect(() => {
         getPost(id)
             .then(res => {
                 setPost(res.data);
-                setComments(res.data.comments);
-                console.log(res.data);
+
+                getComments(id, page)
+                    .then(res => {
+                        setComments(res.data.items);
+                        setPage(page + 1);
+                    })
+                    .catch(console.log);
             })
             .catch(console.log);
     }, []);
@@ -54,6 +60,16 @@ export default () => {
             })
             .catch(console.log);
     }
+
+    const loadMore = () => {
+        setPage(page + 1);
+
+        getComments(id, page)
+            .then(res => {
+                setComments(comments.concat(res.data.items))
+            })
+            .catch(console.log);
+    };
 
     return (
         <div>
@@ -131,6 +147,15 @@ export default () => {
                     </li>
                 ))}
             </ul>
+            <div className="mt-4">
+                <button
+                    type="button"
+                    onClick={loadMore}
+                    className="flex w-full justify-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    Load more
+                </button>
+            </div>
         </div>
     );
 }
