@@ -4,6 +4,7 @@ import {addComment, deleteComment, getPost} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import toastr from "toastr";
 import ConfirmationModal from "./ConfirmationModal.jsx";
+import {getUsername} from "../utils/Auth.js";
 
 export default () => {
     let {id} = useParams();
@@ -57,7 +58,7 @@ export default () => {
     return (
         <div>
             <ConfirmationModal open={open} setOpen={setOpen}
-            item="comment" handleYes={handleDeleteComment}/>
+                               item="comment" handleYes={handleDeleteComment}/>
             <div className="border-b border-gray-200 pb-5" key={post.id}>
                 <div className="flex justify-between items-center">
                     <div>
@@ -114,15 +115,17 @@ export default () => {
                                 <p className="text-sm text-gray-500"><TimeAgo date={c.createdAt}/></p>
                             </div>
                             <div>
-                                <button
-                                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                    onClick={() => {
-                                        setSelectedId(c.id);
-                                        setOpen(true);
-                                    }}
-                                >
-                                    Delete
-                                </button>
+                                {c.createdBy.username === getUsername() ?
+                                    <button
+                                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                        onClick={() => {
+                                            setSelectedId(c.id);
+                                            setOpen(true);
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                    : null}
                             </div>
                         </div>
                     </li>

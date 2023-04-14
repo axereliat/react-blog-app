@@ -16,7 +16,7 @@ export default function Register() {
         e.preventDefault();
 
         try {
-            await register(name, username, email, password);
+            await register(name, email, username, password);
             toastr.success('You were successfully registered');
             setRegisterDone(true);
         } catch (e) {

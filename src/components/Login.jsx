@@ -20,8 +20,10 @@ export default function Login() {
         try {
             const res = await login(username, password);
             const token = res.data.accessToken;
+            const userId = res.data.userId;
+            const usernameFromResponse = res.data.username;
 
-            saveAuthData(token, username);
+            saveAuthData(token, userId, usernameFromResponse);
             toastr.success('You are now logged in');
 
             dispatch(authActions.login({token, username}));
