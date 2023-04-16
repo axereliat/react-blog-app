@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {deletePost, getPosts} from "../utils/Requester.js";
+import {deletePost, getComments, getPosts} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import {Link} from "react-router-dom";
 import {getUsername} from "../utils/Auth.js";
@@ -10,11 +10,14 @@ export default () => {
     const [posts, setPosts] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [open, setOpen] = useState(false);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
 
     useEffect(() => {
-        getPosts()
+        getPosts(page)
             .then(res => {
-                setPosts(res.data);
+                setPosts(res.data.items);
+                setHasMore(res.data.hasMore);
             })
             .catch(err => {
                 console.log(err);
@@ -32,6 +35,17 @@ export default () => {
             })
             .catch(console.log);
     }
+
+    const loadMore = () => {
+        setPage(page + 1);
+
+        getPosts(page)
+            .then(res => {
+                setPosts(posts.concat(res.data.items));
+                setHasMore(res.data.hasMore);
+            })
+            .catch(console.log);
+    };
 
     return (
         <div>
@@ -69,6 +83,17 @@ export default () => {
                     </div>
                 </div>
             ))}
+            {hasMore ?
+                <div className="mt-4">
+                    <button
+                        type="button"
+                        onClick={loadMore}
+                        className="flex w-full justify-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                        Load more
+                    </button>
+                </div>
+                : null}
         </div>
     );
 }

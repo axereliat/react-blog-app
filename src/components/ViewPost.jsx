@@ -78,7 +78,7 @@ export default () => {
         <div>
             <ConfirmationModal open={open} setOpen={setOpen}
                                item="comment" handleYes={handleDeleteComment}/>
-            <div className="border-b border-gray-200 pb-5" key={post.id}>
+            <div className="border-b border-gray-200 pb-5" key={'post-' + post.id}>
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-base font-semibold leading-6 text-gray-900">
@@ -87,12 +87,12 @@ export default () => {
                         <p className="mt-2 max-w-4xl text-sm text-gray-500">
                             {post.content}
                         </p>
-                        <p>Author: {post.author}</p>
+                        <p>Author: {post.author.name}</p>
                         <TimeAgo date={post.createdAt}/>
                     </div>
                     <div className="flex justify-start space-x-2">
-                        {post.categories.map((c, i) => (
-                            <span className="bg-red-300 rounded-xl px-3" key={i}>{c}</span>
+                        {post.categories.map(c => (
+                            <span className="bg-red-300 rounded-xl px-3" key={'comment-' + c.id}>{c.content}</span>
                         ))}
                     </div>
                 </div>

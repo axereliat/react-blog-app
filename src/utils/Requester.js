@@ -20,8 +20,8 @@ export const getCategories = () => {
     });
 }
 
-export const getPosts = () => {
-    return axios.get(baseUrl + '/posts', {
+export const getPosts = page => {
+    return axios.get(baseUrl + '/posts?page=' + page, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + getToken()
