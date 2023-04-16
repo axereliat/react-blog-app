@@ -38,6 +38,24 @@ export const createPost = (title, content, categoryIds) => {
     });
 }
 
+export const updatePost = (id, title, content, categoryIds) => {
+    return axios.put(baseUrl + '/posts/' + id, {title, content, categoryIds},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
+export const deletePost = id => {
+    return axios.delete(baseUrl + '/posts/' + id, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
 export const getPost = id => {
     return axios.get(baseUrl + '/posts/' + id,{
         headers: {

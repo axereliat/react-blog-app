@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {register} from "../utils/Requester.js";
 import toastr from 'toastr';
-import {Navigate} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 
 export default function Register() {
 
@@ -33,6 +33,7 @@ export default function Register() {
     return (
         <div>
             <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+                <Link to='/login' className="underline text-blue-600">Log in your account</Link>
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
                         <form onSubmit={handleSubmit} className="space-y-6" action="#" method="POST">

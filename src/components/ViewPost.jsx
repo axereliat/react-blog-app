@@ -14,6 +14,7 @@ export default () => {
     const [open, setOpen] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(false);
 
     useEffect(() => {
         getPost(id)
@@ -23,6 +24,7 @@ export default () => {
                 getComments(id, page)
                     .then(res => {
                         setComments(res.data.items);
+                        setHasMore(res.data.hasMore);
                         setPage(page + 1);
                     })
                     .catch(console.log);
@@ -66,7 +68,8 @@ export default () => {
 
         getComments(id, page)
             .then(res => {
-                setComments(comments.concat(res.data.items))
+                setComments(comments.concat(res.data.items));
+                setHasMore(res.data.hasMore);
             })
             .catch(console.log);
     };
@@ -147,15 +150,17 @@ export default () => {
                     </li>
                 ))}
             </ul>
-            <div className="mt-4">
-                <button
-                    type="button"
-                    onClick={loadMore}
-                    className="flex w-full justify-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                    Load more
-                </button>
-            </div>
+            {hasMore ?
+                <div className="mt-4">
+                    <button
+                        type="button"
+                        onClick={loadMore}
+                        className="flex w-full justify-center rounded-md bg-gray-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                        Load more
+                    </button>
+                </div>
+                : null}
         </div>
     );
 }
