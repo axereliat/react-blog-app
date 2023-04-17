@@ -1,6 +1,6 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, Navigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {addComment, deleteComment, getComments, getPost} from "../utils/Requester.js";
+import {addComment, deleteComment, deletePost, getComments, getPost} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import toastr from "toastr";
 import ConfirmationModal from "./ConfirmationModal.jsx";
@@ -11,7 +11,9 @@ export default () => {
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [comment, setComment] = useState('');
-    const [open, setOpen] = useState(false);
+    const [commentModalOpen, setCommentModalOpen] = useState(false);
+    const [postModalOpen, setPostModalOpen] = useState(false);
+    const [postDeleted, setPostDeleted] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(false);
@@ -58,9 +60,25 @@ export default () => {
             .then(() => {
                 toastr.success('Your comment was successfully deleted');
                 setComments(comments.filter(c => c.id !== selectedId));
-                setOpen(false);
+                setCommentModalOpen(false);
             })
             .catch(console.log);
+    }
+
+    const handleDeletePost = e => {
+        e.preventDefault();
+
+        deletePost(selectedId)
+            .then(() => {
+                setCommentModalOpen(false);
+                toastr.success('Your post was successfully deleted');
+                setPostDeleted(true);
+            })
+            .catch(console.log);
+    }
+
+    if (postDeleted) {
+        return <Navigate to="/" replace={true}/>;
     }
 
     const loadMore = () => {
@@ -76,8 +94,10 @@ export default () => {
 
     return (
         <div>
-            <ConfirmationModal open={open} setOpen={setOpen}
+            <ConfirmationModal open={commentModalOpen} setOpen={setCommentModalOpen}
                                item="comment" handleYes={handleDeleteComment}/>
+            <ConfirmationModal open={postModalOpen} setOpen={setPostModalOpen}
+                               item="post" handleYes={handleDeletePost}/>
             <div className="border-b border-gray-200 pb-5" key={'post-' + post.id}>
                 <div className="flex justify-between items-center">
                     <div>
@@ -89,6 +109,14 @@ export default () => {
                         </p>
                         <p>Author: {post.author.name}</p>
                         <TimeAgo date={post.createdAt}/>
+                        <div>
+                            <button className="bg-red-600 text-white p-2 rounded" onClick={() => {
+                                setSelectedId(post.id);
+                                setPostModalOpen(true);
+                            }}>Delete</button>
+                            {' '}
+                            <Link to={"/posts/" + post.id + "/edit"}  className="bg-gray-600 text-white p-2 rounded">Edit</Link>
+                        </div>
                     </div>
                     <div className="flex justify-start space-x-2">
                         {post.categories.map(c => (
@@ -139,7 +167,7 @@ export default () => {
                                         className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                         onClick={() => {
                                             setSelectedId(c.id);
-                                            setOpen(true);
+                                            setCommentModalOpen(true);
                                         }}
                                     >
                                         Delete
