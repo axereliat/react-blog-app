@@ -1,8 +1,10 @@
 import {Link, Navigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {addComment, deleteComment, deletePost, getComments, getPost} from "../utils/Requester.js";
+import {addComment, deleteComment, deletePost, getComments, getPost, likePost, unlikePost} from "../utils/Requester.js";
 import TimeAgo from "react-timeago";
 import toastr from "toastr";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faThumbsUp} from '@fortawesome/free-solid-svg-icons'
 import ConfirmationModal from "./ConfirmationModal.jsx";
 import {getUsername} from "../utils/Auth.js";
 
@@ -17,11 +19,18 @@ export default () => {
     const [selectedId, setSelectedId] = useState(null);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(false);
+    const [postLiked, setPostLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
+
+    const likeButtonOneStyles = {color: "gray", fontSize: 30, cursor: 'pointer'};
+    const likeButtonTwoStyles = {color: "black", fontSize: 40, cursor: 'pointer'};
 
     useEffect(() => {
         getPost(id)
             .then(res => {
                 setPost(res.data);
+                setPostLiked(res.data.liked);
+                setLikesCount(res.data.likes);
 
                 getComments(id, page)
                     .then(res => {
@@ -92,6 +101,23 @@ export default () => {
             .catch(console.log);
     };
 
+    const handleLike = () => {
+        if (postLiked) {
+            unlikePost(id)
+                .then(() => {
+                    setLikesCount(likesCount - 1);
+                })
+                .catch(console.log);
+        } else {
+            likePost(id)
+                .then(() => {
+                    setLikesCount(likesCount + 1);
+                })
+                .catch(console.log);
+        }
+        setPostLiked(!postLiked);
+    }
+
     return (
         <div>
             <ConfirmationModal open={commentModalOpen} setOpen={setCommentModalOpen}
@@ -113,9 +139,18 @@ export default () => {
                             <button className="bg-red-600 text-white p-2 rounded" onClick={() => {
                                 setSelectedId(post.id);
                                 setPostModalOpen(true);
-                            }}>Delete</button>
+                            }}>Delete
+                            </button>
                             {' '}
-                            <Link to={"/posts/" + post.id + "/edit"}  className="bg-gray-600 text-white p-2 rounded">Edit</Link>
+                            <Link to={"/posts/" + post.id + "/edit"}
+                                  className="bg-gray-600 text-white p-2 rounded">Edit</Link>
+                        </div>
+
+                        <div>
+                            <FontAwesomeIcon style={postLiked ? likeButtonTwoStyles : likeButtonOneStyles}
+                                             onClick={handleLike}
+                                             icon={faThumbsUp}/>
+                            <span>{likesCount}</span>
                         </div>
                     </div>
                     <div className="flex justify-start space-x-2">

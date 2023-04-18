@@ -91,3 +91,21 @@ export const deleteComment = (postId, commentId) => {
         }
     });
 }
+
+export const likePost = (postId) => {
+    return axios.post(baseUrl + '/posts/' + postId + '/like', {},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
+export const unlikePost = (postId) => {
+    return axios.post(baseUrl + '/posts/' + postId + '/unlike', {},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
