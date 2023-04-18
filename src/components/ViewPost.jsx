@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThumbsUp} from '@fortawesome/free-solid-svg-icons'
 import ConfirmationModal from "./ConfirmationModal.jsx";
 import {getUsername} from "../utils/Auth.js";
+import PostTile from "./common/PostTile.jsx";
 
 export default () => {
     let {id} = useParams();
@@ -21,9 +22,6 @@ export default () => {
     const [hasMore, setHasMore] = useState(false);
     const [postLiked, setPostLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-
-    const likeButtonOneStyles = {color: "gray", fontSize: 30, cursor: 'pointer'};
-    const likeButtonTwoStyles = {color: "black", fontSize: 40, cursor: 'pointer'};
 
     useEffect(() => {
         getPost(id)
@@ -118,6 +116,11 @@ export default () => {
         setPostLiked(!postLiked);
     }
 
+    const onPostDeleted = postId => {
+        setSelectedId(postId);
+        setPostModalOpen(true);
+    };
+
     return (
         <div>
             <ConfirmationModal open={commentModalOpen} setOpen={setCommentModalOpen}
@@ -125,40 +128,10 @@ export default () => {
             <ConfirmationModal open={postModalOpen} setOpen={setPostModalOpen}
                                item="post" handleYes={handleDeletePost}/>
             <div className="border-b border-gray-200 pb-5" key={'post-' + post.id}>
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h2 className="text-base font-semibold leading-6 text-gray-900">
-                            {post.title}
-                        </h2>
-                        <p className="mt-2 max-w-4xl text-sm text-gray-500">
-                            {post.content}
-                        </p>
-                        <p>Author: {post.author.name}</p>
-                        <TimeAgo date={post.createdAt}/>
-                        <div>
-                            <button className="bg-red-600 text-white p-2 rounded" onClick={() => {
-                                setSelectedId(post.id);
-                                setPostModalOpen(true);
-                            }}>Delete
-                            </button>
-                            {' '}
-                            <Link to={"/posts/" + post.id + "/edit"}
-                                  className="bg-gray-600 text-white p-2 rounded">Edit</Link>
-                        </div>
-
-                        <div>
-                            <FontAwesomeIcon style={postLiked ? likeButtonTwoStyles : likeButtonOneStyles}
-                                             onClick={handleLike}
-                                             icon={faThumbsUp}/>
-                            <span>{likesCount}</span>
-                        </div>
-                    </div>
-                    <div className="flex justify-start space-x-2">
-                        {post.categories.map(c => (
-                            <span className="bg-red-300 rounded-xl px-3" key={'comment-' + c.id}>{c.content}</span>
-                        ))}
-                    </div>
-                </div>
+                <PostTile
+                    onDeletePost={() => onPostDeleted(post.id)}
+                    post={post}
+                />
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="col-span-full">
@@ -192,7 +165,8 @@ export default () => {
                     <li key={c.id} className="py-4">
                         <div className="ml-3 flex justify-between items-center">
                             <div>
-                                <p className="text-sm text-gray-500">{c.createdBy.name}</p>
+                                <Link to={"/users/" + c.createdBy.id}
+                                      className="underline text-sm text-blue-500">{c.createdBy.name}</Link>
                                 <p className="text-sm font-medium text-gray-900">{c.content}</p>
                                 <p className="text-sm text-gray-500"><TimeAgo date={c.createdAt}/></p>
                             </div>

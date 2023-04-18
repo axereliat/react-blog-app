@@ -9,6 +9,7 @@ import Layout from "./components/layout/Layout.jsx";
 import CreatePost from "./components/CreatePost.jsx";
 import ViewPost from "./components/ViewPost";
 import UpdatePost from "./components/UpdatePost.jsx";
+import {UserProfile} from "./components/UserProfile";
 
 function App() {
     const isLoggedIn = useSelector(state => state.auth.isLoggedIn)
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/posts/create" element={<CreatePost/>}/>
                 <Route path="/posts/:id/edit" element={<UpdatePost/>}/>
                 <Route path="/posts/:id" element={<ViewPost/>}/>
+                <Route path="/users/:id" element={<UserProfile/>}/>
                 <Route
                     path="*"
                     element={<Navigate to="/" replace/>}

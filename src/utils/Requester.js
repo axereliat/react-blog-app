@@ -109,3 +109,12 @@ export const unlikePost = (postId) => {
         }
     });
 }
+
+export const getProfileInfo = (userId) => {
+    return axios.get(baseUrl + '/auth/profile/' + userId,{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}

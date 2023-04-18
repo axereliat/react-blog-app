@@ -3,8 +3,10 @@ import {Link, Navigate} from 'react-router-dom'
 import {useDispatch, useSelector} from 'react-redux'
 import {authActions} from "../../store/authSlice.js";
 import {useState} from "react";
-import {deleteAuthData} from "../../utils/Auth.js";
+import {deleteAuthData, getUserId} from "../../utils/Auth.js";
 import toastr from "toastr";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 
 export default function Example () {
   const username = useSelector(state => state.auth.username);
@@ -62,15 +64,11 @@ export default function Example () {
                   </div>
 
                   <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                    <div
-                      className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        className="h-8 w-8 rounded-full" src={`https://ui-avatars.com/api/?name=${username}`}
-                        alt={username}
-                        title={username}
-                      />
-                    </div>
+                      <Link to={"/users/" + getUserId()}>
+                          <FontAwesomeIcon
+                              style={{fontSize: "20px"}}
+                              icon={faUserCircle}/>
+                      </Link>
                   </div>
 
                 </div>
