@@ -20,8 +20,13 @@ export const getCategories = () => {
     });
 }
 
-export const getPosts = page => {
-    return axios.get(baseUrl + '/posts?page=' + page, {
+export const getPosts = (page, keyword = '', categories = []) => {
+    return axios.get(baseUrl + '/posts', {
+        params: {
+            categories,
+            page,
+            keyword
+        },
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + getToken()
@@ -112,6 +117,15 @@ export const unlikePost = (postId) => {
 
 export const getProfileInfo = (userId) => {
     return axios.get(baseUrl + '/auth/profile/' + userId,{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
+export const editProfile = (name) => {
+    return axios.put(baseUrl + '/auth/profile', {name}, {
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Bearer ' + getToken()
