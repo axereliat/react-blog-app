@@ -115,6 +115,24 @@ export const unlikePost = (postId) => {
     });
 }
 
+export const likeComment = (commentId) => {
+    return axios.post(baseUrl + '/comments/' + commentId + '/like', {},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
+export const unlikeComment = (commentId) => {
+    return axios.post(baseUrl + '/comments/' + commentId + '/unlike', {},{
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + getToken()
+        }
+    });
+}
+
 export const getProfileInfo = (userId) => {
     return axios.get(baseUrl + '/auth/profile/' + userId,{
         headers: {
