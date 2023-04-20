@@ -34,8 +34,31 @@ export default ({mode}) => {
             });
     }, []);
 
+    const validateFields = () => {
+        if (!title || !content || selectedCats.length === 0) {
+            return 'All fields are required';
+        }
+
+        if (title.length < 3) {
+            return 'Title must be at least 3 characters'
+        }
+
+        if (content.length < 3) {
+            return 'Content must be at least 3 characters'
+        }
+
+        return '';
+    }
+
     const handleCreate = async e => {
         e.preventDefault();
+
+        const validationRes = validateFields();
+
+        if (validationRes) {
+            toastr.error(validationRes);
+            return;
+        }
 
         console.log('request body', {title, content, selectedCats});
         createPost(title, content, selectedCats)
@@ -50,7 +73,13 @@ export default ({mode}) => {
 
     const handleUpdate = async e => {
         e.preventDefault();
-        console.log(mode);
+
+        const validationRes = validateFields();
+
+        if (validationRes) {
+            toastr.error(validationRes);
+            return;
+        }
 
         console.log({title, content, selectedCats});
         updatePost(id, title, content, selectedCats)
