@@ -103,6 +103,7 @@ export default () => {
 
     return (
         <div>
+            <h1 className="text-sm text-center font-bold tracking-tight sm:text-4xl mb-5">Post List</h1>
             <ConfirmationModal open={open} setOpen={setOpen}
                                item="post" handleYes={handleDelete}/>
             <FilterForm handleFilter={handleFilter}

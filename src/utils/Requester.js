@@ -142,10 +142,14 @@ export const getProfileInfo = (userId) => {
     });
 }
 
-export const editProfile = (name) => {
-    return axios.put(baseUrl + '/auth/profile', {name}, {
+export const editProfile = (avatar, name) => {
+    const formData = new FormData();
+    formData.append('avatar', avatar);
+    formData.append('name', name);
+
+    return axios.post(baseUrl + '/auth/profile', formData, {
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             Authorization: 'Bearer ' + getToken()
         }
     });

@@ -1,14 +1,10 @@
-import {Link, Navigate, useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {addComment, deleteComment, deletePost, getComments, getPost, likePost, unlikePost} from "../utils/Requester.js";
-import TimeAgo from "react-timeago";
+import {addComment, deleteComment, deletePost, getComments, getPost} from "../utils/Requester.js";
 import toastr from "toastr";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faThumbsUp} from '@fortawesome/free-solid-svg-icons'
 import ConfirmationModal from "./ConfirmationModal.jsx";
-import {getUsername} from "../utils/Auth.js";
 import PostTile from "./common/PostTile.jsx";
-import CommentsTile from "./common/CommentsTile.jsx";
+import CommentsList from "./common/CommentsList.jsx";
 
 export default () => {
     let {id} = useParams();
@@ -107,6 +103,7 @@ export default () => {
 
     return (
         <div>
+            <h1 className="text-sm text-center font-bold tracking-tight sm:text-4xl">View Post</h1>
             <ConfirmationModal open={postModalOpen} setOpen={setPostModalOpen}
                                item="post" handleYes={handleDeletePost}/>
             <div className="border-b border-gray-200 pb-5" key={'post-' + post.id}>
@@ -115,7 +112,7 @@ export default () => {
                     post={post}
                 />
             </div>
-            <CommentsTile handleSubmit={handleSubmit}
+            <CommentsList handleSubmit={handleSubmit}
                           setComment={setComment}
                           handleDeleteComment={handleDeleteComment}
                           commentModalOpen={commentModalOpen}
